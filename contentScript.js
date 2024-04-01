@@ -104,6 +104,16 @@ function createWidgetContainer() {
   return widget;
 }
 
+// Function to handle the dropdown menu change event
+function handleDropdownChange(dropdown) {
+  dropdown.addEventListener("change", function () {
+    const selectedHostname = dropdown.value;
+    const asin = window.location.href.match(/\/dp\/([A-Z0-9]{10})/)[1];
+    const redirectUrl = `https://${selectedHostname}/dp/${asin}/`;
+    window.location.href = redirectUrl;
+  });
+}
+
 // Function to create the dropdown menu
 function createDropdownMenu(amazonFronts) {
   const dropdown = document.createElement("select");
@@ -113,6 +123,17 @@ function createDropdownMenu(amazonFronts) {
     const option = createDropdownOption(front);
     dropdown.appendChild(option);
   });
+
+  // Set selected option based on current hostname
+  const currentHostname = window.location.hostname;
+  const selectedOption = dropdown.querySelector(
+    `option[value="${currentHostname}"]`
+  );
+  if (selectedOption) {
+    selectedOption.selected = true;
+  }
+
+  handleDropdownChange(dropdown);
   return dropdown;
 }
 
@@ -122,17 +143,6 @@ function createDropdownOption(front) {
   option.textContent = front.name;
   option.value = front.hostname;
   return option;
-}
-
-// Function to create the button element
-function createButton() {
-  const button = document.createElement("button");
-  button.textContent = ">";
-  button.title = "Go to Other Amazon Front";
-  button.style.padding = "8px 8px";
-  button.style.fontSize = "16px";
-  button.style.cursor = "pointer";
-  return button;
 }
 
 // Function to handle the button click event
@@ -214,11 +224,7 @@ function createWidget() {
 
   const dropdown = createDropdownMenu(amazonFronts);
 
-  const button = createButton();
-  button.addEventListener("click", handleButtonClick(dropdown));
-
   widget.appendChild(dropdown);
-  widget.appendChild(button);
 
   // if we can't find the selectors indicating a live product page it's most likely a 404 page
   if (!placementForWidget) {
