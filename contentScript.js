@@ -1,5 +1,3 @@
-// contentScript.js
-
 // Function to find the product title
 function findPlacementForWidget() {
   // the last two selectors are for mobile devices
@@ -29,6 +27,15 @@ function findbuybox() {
   return document.querySelector(
     "div#buybox, div#pwAvailabilityExclusion_feature_div"
   );
+}
+
+// Function to handle the redirection based on the selected option
+function handleRedirection(selectedFront) {
+  return function () {
+    const asin = window.location.href.match(/\/dp\/([A-Z0-9]{10})/)[1];
+    const redirectUrl = `https://${selectedFront}/dp/${asin}/`;
+    window.location.href = redirectUrl;
+  };
 }
 
 // Function to check if the current page URL matches the specified format
@@ -104,16 +111,6 @@ function createWidgetContainer() {
   return widget;
 }
 
-// Function to handle the dropdown menu change event
-function handleDropdownChange(dropdown) {
-  dropdown.addEventListener("change", function () {
-    const selectedHostname = dropdown.value;
-    const asin = window.location.href.match(/\/dp\/([A-Z0-9]{10})/)[1];
-    const redirectUrl = `https://${selectedHostname}/dp/${asin}/`;
-    window.location.href = redirectUrl;
-  });
-}
-
 // Function to create the dropdown menu
 function createDropdownMenu(amazonFronts) {
   const dropdown = document.createElement("select");
@@ -133,7 +130,9 @@ function createDropdownMenu(amazonFronts) {
     selectedOption.selected = true;
   }
 
-  handleDropdownChange(dropdown);
+  dropdown.addEventListener("change", function () {
+    handleRedirection(dropdown.value)();
+  });
   return dropdown;
 }
 
@@ -143,16 +142,6 @@ function createDropdownOption(front) {
   option.textContent = front.name;
   option.value = front.hostname;
   return option;
-}
-
-// Function to handle the button click event
-function handleButtonClick(dropdown) {
-  return function () {
-    const selectedHostname = dropdown.value;
-    const asin = window.location.href.match(/\/dp\/([A-Z0-9]{10})/)[1];
-    const redirectUrl = `https://${selectedHostname}/dp/${asin}/`;
-    window.location.href = redirectUrl;
-  };
 }
 
 function createGoogleSearchButton(modelNumber) {
