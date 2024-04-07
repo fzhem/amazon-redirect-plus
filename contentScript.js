@@ -1,13 +1,15 @@
-// Function to find the product title
 function findPlacementForWidget() {
   // the last two selectors are for mobile devices
   return document.querySelector(
-    "div#centerCol, div#dp.ce_mobile, div#productTitleGroupAnchor"
+    "#centerCol, #dp.ce_mobile, #productTitleGroupAnchor"
   );
 }
 
+// Function to find the product title
 function productTitle() {
-  return document.querySelector("span#productTitle").innerText;
+  return document.querySelector(
+    "span#productTitle, span#title, #title_feature_div "
+  ).innerText;
 }
 
 // Function to check if the current page URL matches the specified format
@@ -18,15 +20,14 @@ function isProductPage() {
 function findoutOfStock() {
   // second selector is for mobile devices
   return document.querySelector(
-    "div#outOfStock, div#pwAvailabilityExclusion_feature_div"
+    "#outOfStock, #pwAvailabilityExclusion_feature_div"
   );
 }
 
+// For placing the search butotn
 function findbuybox() {
-  // second selector is for mobile devices
-  return document.querySelector(
-    "div#buybox, div#pwAvailabilityExclusion_feature_div"
-  );
+  // last two selectors are for mobile devices
+  return document.querySelector("#buybox, #availability_feature_div");
 }
 
 // Function to handle the redirection based on the selected option
@@ -45,7 +46,7 @@ function isProductPage() {
 
 function findItemModelNumberFromProductDetailsList() {
   const ulElements = document.querySelectorAll(
-    "#detailBullets_feature_div > ul"
+    "#detailBullets_feature_div > ul, #detailBullets_secondary_view_div > div > ul"
   );
   for (const ulElement of ulElements) {
     const listItems = ulElement.querySelectorAll("li");
@@ -64,7 +65,7 @@ function findItemModelNumberFromProductDetailsList() {
 // Function to get Model Number/Part Number
 function findModelNumberFromProdDetails() {
   const technicalSpecificationsSection = document.querySelector(
-    "#technicalSpecifications_feature_div, #prodDetails"
+    "#technicalSpecifications_feature_div, #prodDetails, #productSpecifications, #productDetails_techSpec_sections"
   );
   if (technicalSpecificationsSection) {
     const tableRows = technicalSpecificationsSection.querySelectorAll("tr");
@@ -144,44 +145,6 @@ function createDropdownOption(front) {
   return option;
 }
 
-function createGoogleSearchButton(modelNumber) {
-  const button = document.createElement("button");
-  button.textContent = "Search on Google";
-  button.title = "Search for the product on Google";
-  button.style.padding = "6px 12px";
-  button.style.fontSize = "14px";
-  button.style.cursor = "pointer";
-  button.addEventListener("click", () => {
-    const searchUrl = `https://www.google.com/search?q="${modelNumber}"`;
-    window.open(searchUrl, "_blank");
-  });
-  return button;
-}
-
-function addGoogleSearch() {
-  const outOfStockElement = findoutOfStock();
-  if (outOfStockElement) {
-    const buyboxElement = findbuybox();
-    if (buyboxElement) {
-      // it's difficult to scrape model number on non-english pages, hence using the product title instead
-      // Also if there is no number specified we fallback to the product title
-      const itemModelNumber =
-        findItemModelNumberFromProductDetailsList() ||
-        findModelNumberFromProdDetails() ||
-        productTitle();
-      if (itemModelNumber) {
-        const buttonContainer = document.createElement("div");
-        buttonContainer.style.display = "flex";
-        buttonContainer.style.justifyContent = "center";
-        buttonContainer.style.marginTop = "5px";
-        const googleSearchButton = createGoogleSearchButton(itemModelNumber);
-        buttonContainer.appendChild(googleSearchButton);
-        buyboxElement.after(buttonContainer);
-      }
-    }
-  }
-}
-
 // Function to create the widget and its components
 function createWidget() {
   if (!isProductPage()) return; // Exit if not a product page
@@ -228,6 +191,61 @@ function createWidget() {
   }
 }
 
-// Call the function to create the widget
-document.addEventListener("DOMContentLoaded", createWidget());
-document.addEventListener("DOMContentLoaded", addGoogleSearch());
+// Function to create the Google search button
+function createSearchButton(modelNumber, preferredEngine, searchUrl) {
+  const button = document.createElement("button");
+  button.textContent = "Search " + preferredEngine;
+  button.title = "Search for the product on " + preferredEngine;
+  button.style.padding = "6px 12px";
+  button.style.fontSize = "14px";
+  button.style.cursor = "pointer";
+  button.addEventListener("click", () => {
+    const searchQuery = encodeURIComponent(modelNumber);
+    const finalSearchUrl = searchUrl.replace("%s", `"${searchQuery}"`);
+    window.open(finalSearchUrl, "_blank");
+  });
+  return button;
+}
+
+// Function to request the preferred search engine from the background script
+async function requestPreferredSearchEngine() {
+  return browser.runtime.sendMessage({ action: "getPreferences" });
+}
+
+// Function to handle the response from the background script
+async function handlePreferredSearchEngineResponse(response) {
+  if (response) {
+    const preferences = response.preferences;
+    const preferredEngine = Object.keys(preferences)[0];
+    const searchUrl = preferences[preferredEngine];
+    const outOfStockElement = findoutOfStock();
+    const buyboxElement = findbuybox();
+    if (outOfStockElement) {
+      const itemModelNumber =
+        findItemModelNumberFromProductDetailsList() ||
+        findModelNumberFromProdDetails() ||
+        productTitle();
+      if (itemModelNumber) {
+        const buttonContainer = document.createElement("div");
+        buttonContainer.style.display = "flex";
+        buttonContainer.style.justifyContent = "center";
+        buttonContainer.style.marginTop = "5px";
+        const searchButton = createSearchButton(
+          itemModelNumber,
+          preferredEngine,
+          searchUrl
+        );
+        buttonContainer.appendChild(searchButton);
+        buyboxElement.after(buttonContainer);
+      }
+    }
+  }
+}
+
+async function init() {
+  createWidget();
+  const response = await requestPreferredSearchEngine();
+  await handlePreferredSearchEngineResponse(response);
+}
+
+init();
