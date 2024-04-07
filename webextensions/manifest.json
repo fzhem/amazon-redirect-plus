@@ -2,7 +2,8 @@
   "manifest_version": 2,
   "name": "Amazon Redirect Plus",
   "version": "1.5",
-  "description": "Adds links to other Amazon fronts on Amazon product pages.",
+  "description": "Redirection widget for amazon.",
+  "homepage_url": "https://github.com/faizanhemotra/amazon-redirect-plus",
   "permissions": ["storage"],
   "content_scripts": [
     {
