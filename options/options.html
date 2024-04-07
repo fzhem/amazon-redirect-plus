@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Extension Options</title>
+  </head>
+  <body>
+    <h1>Preferences</h1>
+    <form id="search-engines-form">
+      <label for="search-engine">Choose a search engine:</label>
+      <select id="search-engine" name="search-engine">
+        <!-- Options will be populated dynamically by JavaScript -->
+      </select>
+      <div id="custom-options" style="display: none">
+        <label for="custom-name">Custom Name:</label>
+        <input type="text" id="custom-name" name="custom-name" />
+        <label for="custom-url">Custom URL:</label>
+        <input type="text" id="custom-url" name="custom-url" />
+      </div>
+      <button type="submit">Save Preferences</button>
+    </form>
+    <script type="module" src="./options.js"></script>
+    <script type="application/javascript" src="/extlib/browser-polyfill.js"></script>
+  </body>
+</html>
