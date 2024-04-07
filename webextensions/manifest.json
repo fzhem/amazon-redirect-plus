@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Amazon Redirect Plus",
   "version": "1.5",
-  "description": "Redirection widget for amazon.",
+  "description": "This extension adds a convenient widget to the top of Amazon product pages, enabling seamless switching between various regional storefronts. Additionally, it includes a search button for unavailable items, searching by Item Model Number, part number, or product title, prioritizing availability in that order.",
   "homepage_url": "https://github.com/faizanhemotra/amazon-redirect-plus",
   "permissions": ["storage"],
   "content_scripts": [
