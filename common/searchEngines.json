@@ -1,0 +1,36 @@
+{
+  "engines": [
+    {
+      "name": "Google",
+      "url": "https://www.google.com/search?q=%s"
+    },
+    {
+      "name": "Bing",
+      "url": "https://www.bing.com/search?q=%s"
+    },
+    {
+      "name": "Brave",
+      "url": "https://search.brave.com/search?q=%s"
+    },
+    {
+      "name": "DuckDuckGo",
+      "url": "https://duckduckgo.com/?q=%s"
+    },
+    {
+      "name": "Google (NCR) [index]",
+      "url": "https://www.google.com/search?hl=en&safe=off&num=50&pws=0&q=%s"
+    },
+    {
+      "name": "Google Images",
+      "url": "https://www.google.com/search?tbm=isch&q=%s"
+    },
+    {
+      "name": "Qwant",
+      "url": "https://www.qwant.com/?q=%s"
+    },
+    {
+      "name": "Startpage",
+      "url": "https://www.startpage.com/do/dsearch?query=%s"
+    }
+  ]
+}
