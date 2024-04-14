@@ -1,3 +1,4 @@
+const api_namespace = typeof browser !== "undefined" ? browser : chrome;
 function findPlacementForWidget() {
   // the last two selectors are for mobile devices
   return document.querySelector(
@@ -206,7 +207,7 @@ function createSearchButton(modelNumber, preferredEngine, searchUrl) {
 
 // Function to request the preferred search engine from the background script
 async function requestPreferredSearchEngine() {
-  return browser.runtime.sendMessage({ action: "getPreferences" });
+  return api_namespace.runtime.sendMessage({ action: "getPreferences" });
 }
 
 // Function to handle the response from the background script
@@ -216,8 +217,7 @@ async function handlePreferredSearchEngineResponse(response) {
     const preferredEngine = Object.keys(preferences)[0];
     const searchUrl = preferences[preferredEngine];
     const outOfStockElement = findoutOfStock();
-    // #rightCol works the best on desktop
-    const buyboxElement = document.querySelector('#rightCol') || findbuybox();
+    const buyboxElement = findbuybox();
     if (outOfStockElement) {
       const itemModelNumber =
         findItemModelNumberFromProductDetailsList() ||

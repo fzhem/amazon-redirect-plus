@@ -1,19 +1,28 @@
 import { loadSearchEngines } from "/common/load.js";
 import { getUserPreferences, savePreferences } from "/common/preferences.js";
 
+const api_namespace = typeof browser !== "undefined" ? browser : chrome;
+
 // Listen for messages from content scripts
-browser.runtime.onMessage.addListener(async function (request) {
+
+api_namespace.runtime.onMessage.addListener(function (
+  request,
+  sender,
+  sendResponse
+) {
   if (request.action === "getPreferences") {
     // Retrieve preferences from storage
-    const result = await browser.storage.local.get("selectedEngine");
-    const preferences = result.selectedEngine || {};
-    // Send preferences back to content script
-    return { preferences: preferences };
+    api_namespace.storage.local.get("selectedEngine", function (result) {
+      const preferences = result.selectedEngine || {};
+      // Send preferences back to content script
+      sendResponse({ preferences: preferences });
+    });
+    return true;
   }
 });
 
 // Save default search engine to storage when extension is installed or updated
-browser.runtime.onInstalled.addListener(async function () {
+api_namespace.runtime.onInstalled.addListener(async function () {
   try {
     const engines = await loadSearchEngines();
     const defaultEngine = engines[0]; // Get the first search engine
