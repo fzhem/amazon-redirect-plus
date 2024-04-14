@@ -18,6 +18,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Set executable permission for make-chromium.sh
+        run: |
+          chmod +x tools/make-chromium.sh
+          chmod +x tools/make-firefox.sh
       - name: Get release version
         id: release_version
         run: |
