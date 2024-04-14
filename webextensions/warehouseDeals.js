@@ -40,6 +40,7 @@ function createWarehouseButton(selectedFront) {
 }
 
 async function handleWarehouseButton(selectedFront) {
+  if (!selectedFront.warehouseId) return null;
   const warehouseButtonContainer = createWarehouseButtonContainer();
   const warehouseButton = createWarehouseButton(selectedFront);
 
