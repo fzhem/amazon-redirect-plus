@@ -12,9 +12,15 @@ function productTitle() {
   ).innerText;
 }
 
+function productRegex() {
+  // what's gp/dp?: https://401stblow.wordpress.com/2010/06/26/amazon-associates-links-made-simple/
+  return /\/(dp|gp\/product)\/([A-Z0-9]{10})/;
+}
+
 // Function to check if the current page URL matches the specified format
 function isProductPage() {
-  return /\/dp\/[A-Z0-9]{10}/.test(window.location.href);
+  // gp/product is older links?
+  return productRegex().test(window.location.href);
 }
 
 function findoutOfStock() {
@@ -27,21 +33,29 @@ function findoutOfStock() {
 // For placing the search butotn
 function findbuybox() {
   // last two selectors are for mobile devices
+  // #rightCol is easier to work with
   return document.querySelector("#buybox, #availability_feature_div");
+}
+
+function getAsin() {
+  return window.location.href.match(productRegex()).at(-1);
+}
+
+function getgeneralProductOrDetailProduct() {
+  return window.location.href.match(productRegex()).at(1);
+}
+
+function redirectionUrl(selectedFront) {
+  const generalProductOrDetailProduct = getgeneralProductOrDetailProduct();
+  const asin = getAsin();
+  return `https://${selectedFront}/${generalProductOrDetailProduct}/${asin}`;
 }
 
 // Function to handle the redirection based on the selected option
 function handleRedirection(selectedFront) {
   return function () {
-    const asin = window.location.href.match(/\/dp\/([A-Z0-9]{10})/)[1];
-    const redirectUrl = `https://${selectedFront}/dp/${asin}/`;
-    window.location.href = redirectUrl;
+    window.location.href = redirectionUrl(selectedFront);
   };
-}
-
-// Function to check if the current page URL matches the specified format
-function isProductPage() {
-  return /\/dp\/[A-Z0-9]{10}/.test(window.location.href);
 }
 
 function findItemModelNumberFromProductDetailsList() {
@@ -146,26 +160,9 @@ function createDropdownOption(front) {
 }
 
 // Function to create the widget and its components
-function createWidget() {
-  if (!isProductPage()) return; // Exit if not a product page
+function createWidget(amazonFronts) {
+  if (!isProductPage()) return null; // Exit if not a product page
   const placementForWidget = findPlacementForWidget();
-  const amazonFronts = [
-    { name: "🇨🇦 CA", hostname: "www.amazon.ca" },
-    { name: "🇯🇵 CO.JP", hostname: "www.amazon.co.jp" },
-    { name: "🇬🇧 CO.UK", hostname: "www.amazon.co.uk" },
-    { name: "🇺🇸 COM", hostname: "www.amazon.com" },
-    { name: "🇦🇺 COM.AU", hostname: "www.amazon.com.au" },
-    { name: "🇧🇷 COM.BR", hostname: "www.amazon.com.br" },
-    { name: "🇲🇽 COM.MX", hostname: "www.amazon.com.mx" },
-    { name: "🇩🇪 DE", hostname: "www.amazon.de" },
-    { name: "🇪🇸 ES", hostname: "www.amazon.es" },
-    { name: "🇫🇷 FR", hostname: "www.amazon.fr" },
-    { name: "🇮🇳 IN", hostname: "www.amazon.in" },
-    { name: "🇮🇹 IT", hostname: "www.amazon.it" },
-    { name: "🇳🇱 NL", hostname: "www.amazon.nl" },
-    { name: "🇸🇪 SE", hostname: "www.amazon.se" },
-    { name: "🇸🇬 SG", hostname: "www.amazon.sg" },
-  ];
   const centerTable = document.querySelector("center > table");
   const divG = document.getElementById("g");
   const dogsofAmazonLink = divG
@@ -219,7 +216,8 @@ async function handlePreferredSearchEngineResponse(response) {
     const preferredEngine = Object.keys(preferences)[0];
     const searchUrl = preferences[preferredEngine];
     const outOfStockElement = findoutOfStock();
-    const buyboxElement = findbuybox();
+    // #rightCol works the best on desktop
+    const buyboxElement = document.querySelector('#rightCol') || findbuybox();
     if (outOfStockElement) {
       const itemModelNumber =
         findItemModelNumberFromProductDetailsList() ||
@@ -243,7 +241,8 @@ async function handlePreferredSearchEngineResponse(response) {
 }
 
 async function init() {
-  createWidget();
+  const amazonFronts = globalThis.getamazonFronts;
+  createWidget(amazonFronts);
   const response = await requestPreferredSearchEngine();
   await handlePreferredSearchEngineResponse(response);
 }
