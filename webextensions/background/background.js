@@ -15,9 +15,6 @@ browser.runtime.onMessage.addListener(async function (request) {
 // Save default search engine to storage when extension is installed or updated
 browser.runtime.onInstalled.addListener(async function () {
   try {
-    // const response = await fetch(browser.runtime.getURL("searchEngines.json"));
-    // const data = await response.json();
-    // const engines = data.engines;
     const engines = await loadSearchEngines();
     const defaultEngine = engines[0]; // Get the first search engine
 
