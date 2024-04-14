@@ -28,7 +28,7 @@ jobs:
           > release.body.txt
             echo "Version: $(< VERSION)" >> release.body.txt
             echo "Changes:" >> release.body.txt
-            git log --pretty=format:"- %s" >> release.body.txt
+            git log --pretty=format:"- %s" -- . ":(exclude).github" >> release.body.txt
       - name: Update manifest.json for Firefox
         run: |
           version=$(< VERSION)
