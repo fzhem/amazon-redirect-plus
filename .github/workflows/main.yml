@@ -22,7 +22,7 @@ jobs:
       - name: Get release version
         id: release_version
         run: |
-          echo "${{ steps.release_version.outputs.VERSION }}" > $GITHUB_STATE/VERSION
+          echo "${{ steps.release_version.outputs.VERSION }}" > /VERSION
       - name: Assemble release notes
         run: |
           > release.body.txt
@@ -31,11 +31,11 @@ jobs:
             git log --pretty=format:"- %s" -- . ":(exclude).github" >> release.body.txt
       - name: Update manifest.json for Firefox
         run: |
-          version=$(< $GITHUB_STATE/VERSION)
+          version=$(< /VERSION)
           jq --arg version "$version" '.version = $version' platform/firefox/manifest.json > manifest_temp.json && mv manifest_temp.json platform/firefox/manifest.json
       - name: Update manifest.json for Chromium
         run: |
-          version=$(< $GITHUB_STATE/VERSION)
+          version=$(< /VERSION)
           jq --arg version "$version" '.version = $version' platform/chromium/manifest.json > manifest_temp.json && mv manifest_temp.json platform/chromium/manifest.json
       - name: Create GitHub release
         id: create_release
