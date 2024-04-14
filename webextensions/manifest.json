@@ -39,5 +39,10 @@
     "20": "/resources/icon.svg",
     "24": "/resources/icon.svg",
     "32": "/resources/icon.svg"
+  },
+  "applications": {
+    "gecko": {
+      "id": "amazonRedirectPlus@faizanhemotra.com"
+    }
   }
 }
