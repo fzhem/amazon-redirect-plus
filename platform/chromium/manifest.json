@@ -1,7 +1,7 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Amazon Redirect Plus",
-  "version": "2.0",
+  "version": null,
   "description": "This extension adds a convenient widget to the top of Amazon product pages, enabling seamless switching between various regional storefronts. Additionally, it includes a search button for unavailable items, searching by Item Model Number, part number, or product title, prioritizing availability in that order.",
   "homepage_url": "https://github.com/faizanhemotra/amazon-redirect-plus",
   "permissions": ["storage"],
@@ -24,25 +24,20 @@
         "*://www.amazon.se/*",
         "*://www.amazon.sg/*"
       ],
-      "js": ["/extlib/browser-polyfill.js", "/common/amazonFronts.js", "contentScript.js", "warehouseDeals.js"],
+      "js": ["/common/amazonFronts.js", "contentScript.js", "warehouseDeals.js"],
       "run_at": "document_end"
     }
   ],
   "background": {
-    "scripts": ["/extlib/browser-polyfill.js", "/background/background.js"],
+    "service_worker": "/background/background.js",
     "type": "module"
   },
   "options_ui": { "page": "/options/options.html", "open_in_tab": true },
-  "browser_action": { "default_popup": "/options/options.html" },
+  "action": { "default_popup": "/options/options.html" },
   "icons": {
     "16": "/resources/icon.svg",
     "20": "/resources/icon.svg",
     "24": "/resources/icon.svg",
     "32": "/resources/icon.svg"
-  },
-  "applications": {
-    "gecko": {
-      "id": "amazonRedirectPlus@faizanhemotra.com"
-    }
   }
 }

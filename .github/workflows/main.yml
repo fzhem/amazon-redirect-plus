@@ -1,0 +1,69 @@
+name: Create XPI Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set executable permission for make-chromium.sh
+        run: |
+          chmod +x tools/make-chromium.sh
+          chmod +x tools/make-firefox.sh
+      - name: Get release version
+        id: release_version
+        run: |
+          echo "::set-output name=VERSION::$(< VERSION)"
+      - name: Assemble release notes
+        run: |
+          > release.body.txt
+            echo "Version: $(< VERSION)" >> release.body.txt
+            echo "Changes:" >> release.body.txt
+            git log --pretty=format:"- %s" >> release.body.txt
+      - name: Update manifest.json for Firefox
+        run: |
+          version=$(< VERSION)
+          jq --arg version "$version" '.version = $version' platform/firefox/manifest.json > manifest_temp.json && mv manifest_temp.json platform/firefox/manifest.json
+      - name: Update manifest.json for Chromium
+        run: |
+          version=$(< VERSION)
+          jq --arg version "$version" '.version = $version' platform/chromium/manifest.json > manifest_temp.json && mv manifest_temp.json platform/chromium/manifest.json
+      - name: Create GitHub release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          tag_name: ${{ steps.release_version.outputs.VERSION }}
+          release_name: ${{ steps.release_version.outputs.VERSION }}
+          draft: true
+          prerelease: true
+          body_path: release.body.txt
+      - name: Build MV2 packages
+        run: |
+          tools/make-chromium.sh ${{ steps.release_version.outputs.VERSION }}
+          tools/make-firefox.sh ${{ steps.release_version.outputs.VERSION }}
+      - name: Upload Chromium package
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/build/uBlock0_${{ steps.release_version.outputs.VERSION }}.chromium.zip
+          asset_name: uBlock0_${{ steps.release_version.outputs.VERSION }}.chromium.zip
+          asset_content_type: application/octet-stream
+      - name: Upload Firefox package
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/build/uBlock0_${{ steps.release_version.outputs.VERSION }}.firefox.xpi
+          asset_name: uBlock0_${{ steps.release_version.outputs.VERSION }}.firefox.xpi
+          asset_content_type: application/octet-stream
