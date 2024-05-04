@@ -35,9 +35,9 @@
   "options_ui": { "page": "/options/options.html", "open_in_tab": true },
   "action": { "default_popup": "/options/options.html" },
   "icons": {
-    "16": "/resources/icon.svg",
-    "20": "/resources/icon.svg",
-    "24": "/resources/icon.svg",
-    "32": "/resources/icon.svg"
+    "16": "/resources/icon.png",
+    "20": "/resources/icon.png",
+    "24": "/resources/icon.png",
+    "32": "/resources/icon.png"
   }
 }
