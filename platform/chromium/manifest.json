@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Amazon Redirect Plus",
   "version": null,
-  "description": "This extension adds a convenient widget to the top of Amazon product pages, enabling seamless switching between various regional storefronts.",
+  "description": "This extension adds a convenient widget to Amazon product pages, enabling seamless switching between various regional storefronts.",
   "homepage_url": "https://github.com/faizanhemotra/amazon-redirect-plus",
   "permissions": ["storage"],
   "content_scripts": [
