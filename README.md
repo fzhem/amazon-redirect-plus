@@ -14,8 +14,8 @@ Effortlessly switch between different Amazon fronts and search for products on G
 
 # Screenshots
 Product missing in amazon.in
-![missing_product.png](screenshots/missing_product.png)
+![missing_product.png](https://raw.githubusercontent.com/fzhem/amazon-redirect-plus/main/screenshots/missing_product.png)
 Check the same product in UK store by changing to amazon.co.uk
-![switch_to_uk.png](screenshots/switch_to_uk.png)
+![switch_to_uk.png](https://raw.githubusercontent.com/fzhem/amazon-redirect-plus/main/screenshots/switch_to_uk.png)
 Result of clicking on Search Google Button :)
-![google_search_missing_product.png](screenshots/google_search_missing_product.png)
+![google_search_missing_product.png](https://raw.githubusercontent.com/fzhem/amazon-redirect-plus/main/screenshots/google_search_missing_product.png)
