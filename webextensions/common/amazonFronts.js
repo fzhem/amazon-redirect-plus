@@ -1,5 +1,6 @@
 function getamazonFronts() {
   return [
+    { name: "🇦🇪 AE", hostname: "www.amazon.ae", warehouseId: "" },
     { name: "🇨🇦 CA", hostname: "www.amazon.ca", warehouseId: "AUJBRIGYRJ3Q8" },
     {
       name: "🇯🇵 CO.JP",
@@ -12,6 +13,11 @@ function getamazonFronts() {
       warehouseId: "A2OAJ7377F756P",
     },
     {
+      name: "🇿🇦 CO.ZA",
+      hostname: "www.amazon.co.za",
+      warehouseId: "",
+    },
+    {
       name: "🇺🇸 COM",
       hostname: "www.amazon.com",
       warehouseId: "A2L77EE7U53NWQ",
@@ -20,6 +26,11 @@ function getamazonFronts() {
       name: "🇦🇺 COM.AU",
       hostname: "www.amazon.com.au",
       warehouseId: "A1GE4GWD4XC0D9",
+    },
+    {
+      name: "🇧🇪 COM.BE",
+      hostname: "www.amazon.com.be",
+      warehouseId: "",
     },
     {
       name: "🇧🇷 COM.BR",
@@ -32,14 +43,16 @@ function getamazonFronts() {
       warehouseId: "AVDBXBAVVSXLQ",
     },
     { name: "🇩🇪 DE", hostname: "www.amazon.de", warehouseId: "A8KICS1PHF7ZO" },
+    { name: "🇪🇬 EG", hostname: "www.amazon.eg", warehouseId: "A2N2MP47XAP1MK" },
     { name: "🇪🇸 ES", hostname: "www.amazon.es", warehouseId: "A6T89FGPU3U0Q" },
     { name: "🇫🇷 FR", hostname: "www.amazon.fr", warehouseId: "" },
     { name: "🇮🇳 IN", hostname: "www.amazon.in", warehouseId: "" },
     { name: "🇮🇹 IT", hostname: "www.amazon.it", warehouseId: "A2DGM6AFA5W80Q" },
     { name: "🇳🇱 NL", hostname: "www.amazon.nl", warehouseId: "A3C1D9TG1HJ66Y" },
+    { name: "🇸🇦 SA", hostname: "www.amazon.sa", warehouseId: "" },
     { name: "🇸🇪 SE", hostname: "www.amazon.se", warehouseId: "" },
     { name: "🇸🇬 SG", hostname: "www.amazon.sg", warehouseId: "" },
   ];
 }
 
-globalThis.getamazonFronts = getamazonFronts()
+globalThis.getamazonFronts = getamazonFronts();
