@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome</title>
+
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            background: #f9fafb;
+            margin: 0;
+            padding: 0;
+            color: #111827;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: 50px auto;
+            background: white;
+            border-radius: 14px;
+            padding: 30px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            font-size: 26px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #374151;
+        }
+
+        .card {
+            background: #f3f4f6;
+            padding: 16px;
+            border-radius: 12px;
+            margin-top: 16px;
+        }
+
+        .card h2 {
+            margin: 0 0 8px;
+            font-size: 16px;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 18px;
+            border-radius: 10px;
+            background: #2563eb;
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div style="display: flex; align-items: center; gap: 14px;">
+            <img src="resources/icon.svg" width="64" height="64" />
+            <h1 style="margin: 0;">Welcome to Amazon Redirect Plus</h1>
+        </div>
+        <p>
+            This extension helps you quickly switch Amazon storefronts (US, UK,
+            France, etc.) while keeping the same product page.
+        </p>
+
+        <div class="card">
+            <h2>🌍 Current Domain Mode</h2>
+            <p>
+                If you leave your Home Store as <b>Current Domain</b>, you will see a
+                dropdown on product pages that lets you jump between storefronts.
+            </p>
+            <div style="
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 14px;
+                    margin-top: 12px;
+                ">
+                <img src="screenshots/dropdown.png" alt="Current domain mode example" style="
+                    grid-column: span 2;
+                    width: 100%;
+                    aspect-ratio: 16 / 9;
+                    object-fit: cover;
+                    border-radius: 12px;
+                    border: 1px solid #ddd;
+                    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+                    " />
+            </div>
+
+        </div>
+
+        <div class="card">
+            <h2>🏠 Home Store Mode</h2>
+            <p>
+                If you choose a Home Store (like 🇬🇧 UK), product pages will show a
+                <b>Go to</b> button that instantly redirects you to that store.
+            </p>
+            <div style="
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 14px;
+                    margin-top: 12px;
+                ">
+                <img src="screenshots/go_to_btn.png" alt="Go to button example" style="
+                    grid-column: span 2;
+                    width: 100%;
+                    aspect-ratio: 16 / 9;
+                    object-fit: cover;
+                    border-radius: 12px;
+                    border: 1px solid #ddd;
+                    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+                    " />
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🔎 Out of Stock Search Button</h2>
+            <p>
+                When an item is out of stock, the extension can show a button to search
+                for the model number using your preferred search engine.
+            </p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 12px;">
+                <img src="screenshots/missing_product.png" alt="Missing product example" style="
+                width: 100%;
+                aspect-ratio: 16 / 9;
+                object-fit: cover;
+                border-radius: 12px;
+                border: 1px solid #ddd;
+                box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+                " />
+
+                <img src="screenshots/google_search_missing_product.png" alt="Google search missing product example"
+                    style="
+                width: 100%;
+                aspect-ratio: 16 / 9;
+                object-fit: cover;
+                border-radius: 12px;
+                border: 1px solid #ddd;
+                box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+                " />
+            </div>
+
+
+        </div>
+
+        <a class="btn" href="options/options.html">⚙️ Configure Preferences</a>
+    </div>
+</body>
+
+</html>

@@ -5,6 +5,14 @@ const api_namespace = typeof browser !== "undefined" ? browser : chrome;
 
 // Listen for messages from content scripts
 
+api_namespace.runtime.onInstalled.addListener((details) => {
+  if (details.reason === "install") {
+    api_namespace.tabs.create({
+      url: api_namespace.runtime.getURL("startup.html"),
+    });
+  }
+});
+
 api_namespace.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "getPreferences") {
     api_namespace.storage.local.get(null, (result) => {
@@ -13,6 +21,7 @@ api_namespace.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 });
+
 
 // Save default search engine to storage when extension is installed or updated
 api_namespace.runtime.onInstalled.addListener(async function () {
