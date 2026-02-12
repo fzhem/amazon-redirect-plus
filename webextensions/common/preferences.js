@@ -7,13 +7,17 @@ async function getUserPreferences() {
     "searchEngines",
     "customEngines",
     "selectedEngine",
+    "homeStore",
   ]);
+
   return {
     searchEngines: result.searchEngines || {},
     customEngines: result.customEngines || {},
     selectedEngine: result.selectedEngine || null,
+    homeStore: result.homeStore || "domain"
   };
 }
+
 
 async function savePreferences(
   preferences,
@@ -35,7 +39,6 @@ async function savePreferences(
       });
     }
     await api_namespace.storage.local.set(currentPreferences);
-    console.log("Preferences saved successfully! Refresh any open pages.");
     if (showAlert) {
       alert("Preferences saved successfully! Refresh any open pages.");
     }

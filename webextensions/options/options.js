@@ -1,11 +1,13 @@
 import { loadSearchEngines } from "/common/load.js";
 import { getUserPreferences, savePreferences } from "/common/preferences.js";
+import "/common/amazonFronts.js"; // provides globalThis.getamazonFronts
 
 document.addEventListener("DOMContentLoaded", async function () {
   try {
-    let { searchEngines, customEngines, selectedEngine } =
-      await getUserPreferences(); // Retrieve user preferences
-    const jsonEngines = await loadSearchEngines(); // Load search engines data
+    let { searchEngines, customEngines, selectedEngine, homeStore } =
+      await getUserPreferences();
+
+    const jsonEngines = await loadSearchEngines();
 
     // Update searchEngines object with engines from the JSON file
     jsonEngines.forEach((engine) => {
@@ -27,31 +29,42 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     const selectedEngineName = Object.keys(selectedEngine)[0];
 
-    populateDropdown(engines, selectedEngineName); // Populate dropdown with search engines
-    addStoredEnginesToDropdown({ searchEngines, customEngines }); // Add stored engines to the dropdown
+    populateDropdown(engines, selectedEngineName);
+    addStoredEnginesToDropdown({ searchEngines, customEngines });
+
+    // ---- HOME STORE DROPDOWN ----
+    const amazonFronts = globalThis.getamazonFronts || [];
+    let selectedHomeStoreHost = "domain"; // default should be current domain
+
+    if (homeStore && typeof homeStore === "object") {
+      selectedHomeStoreHost = Object.values(homeStore)[0] || "domain";
+    } else if (typeof homeStore === "string") {
+      selectedHomeStoreHost = homeStore;
+    }
+
+    populateHomeStoreDropdown(amazonFronts, selectedHomeStoreHost);
+
+    updateGoButtonInfoBoxState();
   } catch (error) {
-    handleErrors(error); // Handle errors
+    handleErrors(error);
   }
 
   document
     .getElementById("search-engine")
-    .addEventListener("change", handleSearchEngineChange); // Add event listener for search engine selection change
+    .addEventListener("change", handleSearchEngineChange);
+
+  document
+    .getElementById("home-store")
+    .addEventListener("change", updateGoButtonInfoBoxState);
   document
     .getElementById("search-engines-form")
-    .addEventListener("submit", handleFormSubmission); // Add event listener for form submission
+    .addEventListener("submit", handleFormSubmission);
 });
-
-// async function loadSearchEngines() {
-//   const response = await fetch("searchEngines.json");
-//   const data = await response.json();
-//   return data.engines;
-// }
 
 function populateDropdown(engines, selectedEngine) {
   const selectElement = document.getElementById("search-engine");
-  let customOptionAdded = false;
 
-  selectElement.innerHTML = ""; // Clear existing options
+  selectElement.innerHTML = "";
 
   engines.forEach((engine) => {
     const option = createOptionElement(engine);
@@ -59,7 +72,6 @@ function populateDropdown(engines, selectedEngine) {
 
     if (engine.name === selectedEngine) {
       option.selected = true;
-      customOptionAdded = !engine.name.startsWith("Custom");
     }
   });
 
@@ -72,10 +84,6 @@ function createOptionElement(engine) {
   option.value = engine.url;
   option.textContent = engine.name;
   return option;
-}
-
-function isEngineSelected(engine, preferences) {
-  return preferences.hasOwnProperty(engine.name);
 }
 
 function removeCustomOption(selectElement) {
@@ -94,31 +102,64 @@ function handleSearchEngineChange() {
   const selectElement = document.getElementById("search-engine");
   const selectedValue =
     selectElement.options[selectElement.selectedIndex].value;
+
   document.getElementById("custom-options").style.display =
     selectedValue === "custom" ? "block" : "none";
 }
 
+function updateGoButtonInfoBoxState() {
+  const homeStoreSelect = document.getElementById("home-store");
+  const infoBox = document.getElementById("go-button-info");
+
+  if (homeStoreSelect.value === "domain") {
+    infoBox.textContent =
+      "ℹ️ No home store selected. You will see a dropdown on Amazon stores.";
+  } else {
+    infoBox.textContent =
+      "ℹ️ Home store selected. You will see a 'Go to' button for your home store.";
+  }
+}
+
 function handleFormSubmission(event) {
   event.preventDefault();
+
+  const preferences = {};
+
   const selectElement = document.getElementById("search-engine");
   const selectedOption = selectElement.options[selectElement.selectedIndex];
   const selectedEngine = selectedOption.value;
   const selectedEngineName = selectedOption.textContent;
 
-  const preferences = {
-    selectedEngine: selectedEngineName,
-  };
+  // ---- HOME STORE SAVE ----
+  const homeStoreSelect = document.getElementById("home-store");
+  const homeStoreOption =
+    homeStoreSelect.options[homeStoreSelect.selectedIndex];
+
+  const homeStoreValue = homeStoreOption.value;
+  const homeStoreName = homeStoreOption.textContent;
+
+
+  if (homeStoreValue === "domain") {
+    preferences.homeStore = { "🌍 Current Domain": "domain" };
+  } else {
+    preferences.homeStore = { [homeStoreName]: homeStoreValue };
+  }
+
 
   if (selectedEngine === "custom") {
     const customPreferences = getCustomEnginePreferences();
+
     preferences.customEngines = { ...customPreferences };
+
     const customSelectedEngineName = Object.keys(preferences.customEngines)[0];
     const customSelectedEngine =
       preferences.customEngines[customSelectedEngineName];
+
     preferences.selectedEngine = {
       [customSelectedEngineName]: customSelectedEngine,
     };
-    savePreferences(preferences, true, ["customEngines"]); // Pass 'customEngines' as an array to indicate appending
+
+    savePreferences(preferences, true, ["customEngines"]);
   } else {
     preferences.selectedEngine = { [selectedEngineName]: selectedEngine };
     savePreferences(preferences, true);
@@ -126,16 +167,13 @@ function handleFormSubmission(event) {
 }
 
 function getCustomEnginePreferences() {
-  // Get all options within the select element
   const allOptions = document.querySelectorAll("#search-engine option");
 
-  // Filter out options that start with "Custom"
   const customOptions = Array.from(allOptions).filter((option) => {
     const optionText = option.textContent.trim();
     return optionText.startsWith("Custom");
   });
 
-  // Initialize an array to store the integer suffixes of existing custom options
   const suffixes = customOptions.map((option) => {
     const optionText = option.textContent.trim();
     return parseInt(optionText.replace("Custom", ""));
@@ -144,15 +182,13 @@ function getCustomEnginePreferences() {
   let suffixesNaNReplaced = suffixes.map(function (item) {
     return isNaN(item) ? 0 : item;
   });
-  // Find the maximum integer value among the suffixes
-  const maxSuffix = Math.max(...suffixesNaNReplaced);
 
-  // Increment the max suffix for the next Custom option
+  const maxSuffix = Math.max(...suffixesNaNReplaced);
   const nextCustomName = "Custom" + (maxSuffix + 1);
 
-  // Get the custom name and url from the input fields
   const customName =
     document.getElementById("custom-name").value || nextCustomName;
+
   const customUrl = document.getElementById("custom-url").value;
 
   return { [customName]: customUrl };
@@ -164,7 +200,6 @@ function addStoredEnginesToDropdown(preferences) {
     (option) => option.value
   );
 
-  // Add engines from the searchEngines object
   Object.entries(preferences.searchEngines).forEach(([name, url]) => {
     if (!existingOptions.includes(url)) {
       const option = createOptionElement({ name, url });
@@ -179,20 +214,41 @@ function addStoredEnginesToDropdown(preferences) {
     }
   });
 
-  // Add engines from the customEngines object
   Object.entries(preferences.customEngines).forEach(([name, url]) => {
     if (!existingOptions.includes(url)) {
       const option = createOptionElement({ name, url });
       selectElement.appendChild(option);
     } else {
       const existingOption = Array.from(selectElement.options).find(
-        (option) => option.textContent === name // Check if the name matches
+        (option) => option.textContent === name
       );
       if (existingOption) {
         existingOption.textContent = name;
       }
     }
   });
+}
+
+// ---- HOME STORE DROPDOWN ----
+function populateHomeStoreDropdown(amazonFronts, selectedHost) {
+  const selectElement = document.getElementById("home-store");
+  selectElement.innerHTML = "";
+
+  // Add special "domain" option
+  const domainOption = document.createElement("option");
+  domainOption.value = "domain";
+  domainOption.textContent = "🌍 Current Domain";
+  selectElement.appendChild(domainOption);
+
+  // Add amazon fronts
+  amazonFronts.forEach((front) => {
+    const option = document.createElement("option");
+    option.value = front.hostname;
+    option.textContent = front.name;
+    selectElement.appendChild(option);
+  });
+
+  selectElement.value = selectedHost || "domain";
 }
 
 function handleErrors(error) {

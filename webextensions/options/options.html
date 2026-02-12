@@ -1,26 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Extension Options</title>
-  </head>
-  <body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Extension Options</title>
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Roboto, Helvetica, Arial, sans-serif;
+      background: #f9fafb;
+      color: #111827;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      margin-top: 18px;
+    }
+
+    select,
+    input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      font-size: 14px;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    select:focus,
+    input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    }
+
+    #custom-options {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #f3f4f6;
+    }
+
+    button {
+      margin-top: 24px;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: #2563eb;
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    #go-button-info {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #eef2ff;
+      color: #3730a3;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .section-title {
+      margin-top: 26px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
     <h1>Preferences</h1>
+
     <form id="search-engines-form">
-      <label for="search-engine">Choose a search engine:</label>
+      <div class="section-title">Search Engine</div>
       <select id="search-engine" name="search-engine">
-        <!-- Options will be populated dynamically by JavaScript -->
+        <!-- Options will be populated dynamically -->
       </select>
+
       <div id="custom-options" style="display: none">
-        <label for="custom-name">Custom Name:</label>
+        <label for="custom-name">Custom Name</label>
         <input type="text" id="custom-name" name="custom-name" />
-        <label for="custom-url">Custom URL:</label>
+
+        <label for="custom-url">Custom URL</label>
         <input type="text" id="custom-url" name="custom-url" />
       </div>
+
+      <div class="section-title">Home Store</div>
+      <select id="home-store" name="home-store">
+        <!-- Options will be populated dynamically -->
+      </select>
+
+      <div id="go-button-info"></div>
+
       <button type="submit">Save Preferences</button>
     </form>
-    <script type="module" src="./options.js"></script>
-    <script type="application/javascript" src="/extlib/browser-polyfill.js"></script>
-  </body>
+  </div>
+
+  <script type="module" src="./options.js"></script>
+  <script type="application/javascript" src="/extlib/browser-polyfill.js"></script>
+</body>
+
 </html>

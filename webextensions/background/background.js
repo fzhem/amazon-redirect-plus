@@ -5,17 +5,10 @@ const api_namespace = typeof browser !== "undefined" ? browser : chrome;
 
 // Listen for messages from content scripts
 
-api_namespace.runtime.onMessage.addListener(function (
-  request,
-  sender,
-  sendResponse
-) {
+api_namespace.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "getPreferences") {
-    // Retrieve preferences from storage
-    api_namespace.storage.local.get("selectedEngine", function (result) {
-      const preferences = result.selectedEngine || {};
-      // Send preferences back to content script
-      sendResponse({ preferences: preferences });
+    api_namespace.storage.local.get(null, (result) => {
+      sendResponse({ preferences: result });
     });
     return true;
   }

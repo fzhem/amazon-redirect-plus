@@ -128,20 +128,27 @@ function createWidgetContainer() {
 }
 
 // Function to create the dropdown menu
-function createDropdownMenu(amazonFronts) {
+function createDropdownMenu(amazonFronts, homeStore) {
   const dropdown = document.createElement("select");
   dropdown.style.padding = "4px";
   dropdown.style.marginRight = "1px";
+
   amazonFronts.forEach((front) => {
     const option = createDropdownOption(front);
     dropdown.appendChild(option);
   });
 
-  // Set selected option based on current hostname
   const currentHostname = window.location.hostname;
+  const homeStoreHostname = homeStore ? Object.values(homeStore)[0] : null;
+  const preferredHostname =
+    homeStoreHostname && homeStoreHostname !== "domain"
+      ? homeStoreHostname
+      : currentHostname;
+
   const selectedOption = dropdown.querySelector(
-    `option[value="${currentHostname}"]`
+    `option[value="${preferredHostname}"]`
   );
+
   if (selectedOption) {
     selectedOption.selected = true;
   }
@@ -149,8 +156,10 @@ function createDropdownMenu(amazonFronts) {
   dropdown.addEventListener("change", function () {
     handleRedirection(dropdown.value)();
   });
+
   return dropdown;
 }
+
 
 // Function to create an option element for the dropdown menu
 function createDropdownOption(front) {
@@ -161,8 +170,9 @@ function createDropdownOption(front) {
 }
 
 // Function to create the widget and its components
-function createWidget(amazonFronts) {
-  if (!isProductPage()) return null; // Exit if not a product page
+function createWidget(amazonFronts, homeStoreHost, homeStoreName) {
+  if (!isProductPage()) return null;
+
   const placementForWidget = findPlacementForWidget();
   const centerTable = document.querySelector("center > table");
   const divG = document.getElementById("g");
@@ -172,11 +182,27 @@ function createWidget(amazonFronts) {
 
   const widget = createWidgetContainer();
 
-  const dropdown = createDropdownMenu(amazonFronts);
+  // if homeStore is forced -> show button only
+  if (homeStoreHost && homeStoreHost !== "domain") {
+    // already on home store → don't show anything
+    if (window.location.hostname === homeStoreHost) return null;
 
-  widget.appendChild(dropdown);
+    const goButton = document.createElement("button");
+    goButton.textContent = `Go to ${homeStoreName || homeStoreHost}`;
+    goButton.style.padding = "6px 12px";
+    goButton.style.cursor = "pointer";
 
-  // if we can't find the selectors indicating a live product page it's most likely a 404 page
+    goButton.addEventListener("click", () => {
+      handleRedirection(homeStoreHost)();
+    });
+
+    widget.appendChild(goButton);
+  } else {
+    // default behavior -> dropdown
+    const dropdown = createDropdownMenu(amazonFronts);
+    widget.appendChild(dropdown);
+  }
+
   if (!placementForWidget) {
     if (centerTable !== null) {
       centerTable.parentElement.insertBefore(widget, centerTable);
@@ -188,6 +214,7 @@ function createWidget(amazonFronts) {
     placementForWidget.prepend(widget);
   }
 }
+
 
 // Function to create the Google search button
 function createSearchButton(modelNumber, preferredEngine, searchUrl) {
@@ -206,16 +233,20 @@ function createSearchButton(modelNumber, preferredEngine, searchUrl) {
 }
 
 // Function to request the preferred search engine from the background script
-async function requestPreferredSearchEngine() {
-  return api_namespace.runtime.sendMessage({ action: "getPreferences" });
+async function requestPreferences() {
+  const response = await api_namespace.runtime.sendMessage({
+    action: "getPreferences",
+  });
+
+  return response.preferences;
 }
 
 // Function to handle the response from the background script
-async function handlePreferredSearchEngineResponse(response) {
-  if (response) {
-    const preferences = response.preferences;
-    const preferredEngine = Object.keys(preferences)[0];
-    const searchUrl = preferences[preferredEngine];
+async function handlePreferredSearchEngineResponse(preferences) {
+  if (preferences && preferences.selectedEngine) {
+    const selectedEngine = preferences.selectedEngine || {};
+    const preferredEngine = Object.keys(selectedEngine)[0];
+    const searchUrl = selectedEngine[preferredEngine];
     const outOfStockElement = findoutOfStock();
     const buyboxElement = findbuybox();
     if (outOfStockElement) {
@@ -242,9 +273,20 @@ async function handlePreferredSearchEngineResponse(response) {
 
 async function init() {
   const amazonFronts = globalThis.getamazonFronts;
-  createWidget(amazonFronts);
-  const response = await requestPreferredSearchEngine();
-  await handlePreferredSearchEngineResponse(response);
+
+  const prefs = await requestPreferences();
+
+  let homeStoreHost = "domain";
+  let homeStoreName = null;
+
+  if (prefs.homeStore && typeof prefs.homeStore === "object") {
+    homeStoreName = Object.keys(prefs.homeStore)[0];
+    homeStoreHost = Object.values(prefs.homeStore)[0];
+  }
+
+  createWidget(amazonFronts, homeStoreHost, homeStoreName);
+
+  await handlePreferredSearchEngineResponse(prefs);
 }
 
 init();
