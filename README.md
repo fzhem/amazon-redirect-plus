@@ -10,12 +10,14 @@
 <a href="https://chrome.google.com/webstore/detail/amazon-redirect-plus/dpniemnplpmdcnbchhmofcnabndedipa"><img src="https://user-images.githubusercontent.com/585534/107280622-91a8ea80-6a26-11eb-8d07-77c548b28665.png" alt="Get uBlock Origin for Chromium"></a>
 
 ***
-Effortlessly switch between different Amazon fronts and search for products on Google (or your choice of search engine) with this browser extension. Easily navigate global Amazon storefronts using and quickly search for unavailable items. Enhance your shopping experience today!
+Effortlessly switch between different Amazon fronts and search for products on Google (or your choice of search engine) with this browser extension. Easily navigate global Amazon storefronts using and quickly search for unavailable items. Enhance your shopping experience today with this `vibe-coded` extension!
 
 # Screenshots
-Product missing in amazon.in
-![missing_product.png](https://raw.githubusercontent.com/fzhem/amazon-redirect-plus/main/screenshots/missing_product.png)
-Check the same product in UK store by changing to amazon.co.uk
-![switch_to_uk.png](https://raw.githubusercontent.com/fzhem/amazon-redirect-plus/main/screenshots/switch_to_uk.png)
-Result of clicking on Search Google Button :)
-![google_search_missing_product.png](https://raw.githubusercontent.com/fzhem/amazon-redirect-plus/main/screenshots/google_search_missing_product.png)
+Product missing in amazon.in  
+![missing_product.png](https://raw.githubusercontent.com/fzhem/amazon-redirect-plus/main/webextensions/screenshots/missing_product.png)
+
+Check the same product in UK store by changing to amazon.co.uk  
+![switch_to_uk.png](https://raw.githubusercontent.com/fzhem/amazon-redirect-plus/main/webextensions/screenshots/dropdown.png)
+
+Result of clicking on Search Google Button :)  
+![google_search_missing_product.png](https://raw.githubusercontent.com/fzhem/amazon-redirect-plus/main/webextensions/screenshots/google_search_missing_product.png)
