@@ -98,6 +98,53 @@
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
+
+    .regions-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #f3f4f6;
+    }
+
+    .region-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .region-item input[type="checkbox"] {
+      width: auto;
+      padding: 0;
+      margin: 0;
+    }
+
+    .region-item label {
+      font-size: 13px;
+      font-weight: 400;
+      margin: 0;
+      cursor: pointer;
+    }
+
+    .regions-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .regions-actions button {
+      margin-top: 0;
+      width: auto;
+      padding: 6px 14px;
+      font-size: 13px;
+      background: #6b7280;
+    }
+
+    .regions-actions button:hover {
+      background: #4b5563;
+    }
   </style>
 </head>
 
@@ -125,6 +172,15 @@
       </select>
 
       <div id="go-button-info"></div>
+
+      <div class="section-title">Regions</div>
+      <div id="regions-container" class="regions-grid">
+        <!-- Populated dynamically -->
+      </div>
+      <div class="regions-actions">
+        <button type="button" id="select-all-regions">Select All</button>
+        <button type="button" id="deselect-all-regions">Deselect All</button>
+      </div>
 
       <button type="submit">Save Preferences</button>
     </form>

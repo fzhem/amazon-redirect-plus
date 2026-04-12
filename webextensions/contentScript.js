@@ -276,6 +276,11 @@ async function init() {
 
   const prefs = await requestPreferences();
 
+  const enabledRegions = prefs.enabledRegions ?? null;
+  const filteredFronts = enabledRegions
+    ? amazonFronts.filter((front) => enabledRegions.includes(front.hostname))
+    : amazonFronts;
+
   let homeStoreHost = "domain";
   let homeStoreName = null;
 
@@ -284,7 +289,7 @@ async function init() {
     homeStoreHost = Object.values(prefs.homeStore)[0];
   }
 
-  createWidget(amazonFronts, homeStoreHost, homeStoreName);
+  createWidget(filteredFronts, homeStoreHost, homeStoreName);
 
   await handlePreferredSearchEngineResponse(prefs);
 }

@@ -4,7 +4,7 @@ import "/common/amazonFronts.js"; // provides globalThis.getamazonFronts
 
 document.addEventListener("DOMContentLoaded", async function () {
   try {
-    let { searchEngines, customEngines, selectedEngine, homeStore } =
+    let { searchEngines, customEngines, selectedEngine, homeStore, enabledRegions } =
       await getUserPreferences();
 
     const jsonEngines = await loadSearchEngines();
@@ -44,6 +44,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     populateHomeStoreDropdown(amazonFronts, selectedHomeStoreHost);
 
+    populateRegionsCheckboxes(amazonFronts, enabledRegions);
+
     updateGoButtonInfoBoxState();
   } catch (error) {
     handleErrors(error);
@@ -56,6 +58,19 @@ document.addEventListener("DOMContentLoaded", async function () {
   document
     .getElementById("home-store")
     .addEventListener("change", updateGoButtonInfoBoxState);
+
+  document.getElementById("select-all-regions").addEventListener("click", () => {
+    document
+      .querySelectorAll("#regions-container input[type='checkbox']")
+      .forEach((cb) => (cb.checked = true));
+  });
+
+  document.getElementById("deselect-all-regions").addEventListener("click", () => {
+    document
+      .querySelectorAll("#regions-container input[type='checkbox']")
+      .forEach((cb) => (cb.checked = false));
+  });
+
   document
     .getElementById("search-engines-form")
     .addEventListener("submit", handleFormSubmission);
@@ -107,6 +122,30 @@ function handleSearchEngineChange() {
     selectedValue === "custom" ? "block" : "none";
 }
 
+function populateRegionsCheckboxes(amazonFronts, enabledRegions) {
+  const container = document.getElementById("regions-container");
+  container.innerHTML = "";
+
+  amazonFronts.forEach((front) => {
+    const item = document.createElement("div");
+    item.className = "region-item";
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.id = `region-${front.hostname}`;
+    checkbox.value = front.hostname;
+    checkbox.checked = enabledRegions === null || enabledRegions.includes(front.hostname);
+
+    const label = document.createElement("label");
+    label.htmlFor = `region-${front.hostname}`;
+    label.textContent = front.name;
+
+    item.appendChild(checkbox);
+    item.appendChild(label);
+    container.appendChild(item);
+  });
+}
+
 function updateGoButtonInfoBoxState() {
   const homeStoreSelect = document.getElementById("home-store");
   const infoBox = document.getElementById("go-button-info");
@@ -144,6 +183,14 @@ function handleFormSubmission(event) {
   } else {
     preferences.homeStore = { [homeStoreName]: homeStoreValue };
   }
+
+  // ---- REGIONS SAVE ----
+  const allFronts = globalThis.getamazonFronts || [];
+  const checkedRegions = Array.from(
+    document.querySelectorAll("#regions-container input[type='checkbox']:checked")
+  ).map((cb) => cb.value);
+  preferences.enabledRegions =
+    checkedRegions.length === allFronts.length ? null : checkedRegions;
 
 
   if (selectedEngine === "custom") {
