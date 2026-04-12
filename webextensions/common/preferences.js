@@ -8,13 +8,15 @@ async function getUserPreferences() {
     "customEngines",
     "selectedEngine",
     "homeStore",
+    "enabledRegions",
   ]);
 
   return {
     searchEngines: result.searchEngines || {},
     customEngines: result.customEngines || {},
     selectedEngine: result.selectedEngine || null,
-    homeStore: result.homeStore || "domain"
+    homeStore: result.homeStore || "domain",
+    enabledRegions: result.enabledRegions ?? null,
   };
 }
 
